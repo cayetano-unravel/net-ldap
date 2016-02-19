@@ -665,6 +665,9 @@ class Net::LDAP
     # anything with the bind results. We then pass self to the caller's
     # block, where he will execute his LDAP operations. Of course they will
     # all generate auth failures if the bind was unsuccessful.
+
+    DeviseLdapAuthenticatable::Logger.send("NET-LDAP Open connection.")
+
     raise Net::LDAP::AlreadyOpenedError, "Open already in progress" if @open_connection
 
     instrument "open.net_ldap" do |payload|
@@ -730,6 +733,9 @@ class Net::LDAP
   #    end
   #  end
   def search(args = {})
+
+    DeviseLdapAuthenticatable::Logger.send("NET-LDAP Search : @base => #{@base}")
+
     unless args[:ignore_server_caps]
       args[:paged_searches_supported] = paged_searches_supported?
     end
@@ -816,6 +822,9 @@ class Net::LDAP
   # the documentation for #auth, the password parameter can be a Ruby Proc
   # instead of a String.
   def bind(auth = @auth)
+
+    DeviseLdapAuthenticatable::Logger.send("NET-LDAP Bind.")
+
     instrument "bind.net_ldap" do |payload|
       if @open_connection
         payload[:connection] = @open_connection
